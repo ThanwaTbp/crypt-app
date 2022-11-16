@@ -41,96 +41,7 @@
   <main class="main-content position-relative max-height-vh-100 h-100 mt-1 border-radius-lg ">
 @include("layouts/nav")
     <div class="container-fluid py-4">
-      <div class="row" id="__rate">
-        <!-- <div class="col-xl-3 col-sm-6 mb-xl-0 mb-4">
-          <div class="card">
-            <div class="card-body p-3">
-              <div class="row">
-                <div class="col-8">
-                  <div class="numbers">
-                    <p class="text-sm mb-0 text-capitalize font-weight-bold">Today's Money</p>
-                    <h5 class="font-weight-bolder mb-0">
-                      $53,000
-                      <span class="text-success text-sm font-weight-bolder">+55%</span>
-                    </h5>
-                  </div>
-                </div>
-                <div class="col-4 text-end">
-                  <div class="icon icon-shape bg-gradient-primary shadow text-center border-radius-md">
-                    <i class="ni ni-money-coins text-lg opacity-10" aria-hidden="true"></i>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div> -->
-        <!-- <div class="col-xl-3 col-sm-6 mb-xl-0 mb-4">
-          <div class="card">
-            <div class="card-body p-3">
-              <div class="row">
-                <div class="col-8">
-                  <div class="numbers">
-                    <p class="text-sm mb-0 text-capitalize font-weight-bold">Today's Users</p>
-                    <h5 class="font-weight-bolder mb-0">
-                      2,300
-                      <span class="text-success text-sm font-weight-bolder">+3%</span>
-                    </h5>
-                  </div>
-                </div>
-                <div class="col-4 text-end">
-                  <div class="icon icon-shape bg-gradient-primary shadow text-center border-radius-md">
-                    <i class="ni ni-world text-lg opacity-10" aria-hidden="true"></i>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="col-xl-3 col-sm-6 mb-xl-0 mb-4">
-          <div class="card">
-            <div class="card-body p-3">
-              <div class="row">
-                <div class="col-8">
-                  <div class="numbers">
-                    <p class="text-sm mb-0 text-capitalize font-weight-bold">New Clients</p>
-                    <h5 class="font-weight-bolder mb-0">
-                      +3,462
-                      <span class="text-danger text-sm font-weight-bolder">-2%</span>
-                    </h5>
-                  </div>
-                </div>
-                <div class="col-4 text-end">
-                  <div class="icon icon-shape bg-gradient-primary shadow text-center border-radius-md">
-                    <i class="ni ni-paper-diploma text-lg opacity-10" aria-hidden="true"></i>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="col-xl-3 col-sm-6">
-          <div class="card">
-            <div class="card-body p-3">
-              <div class="row">
-                <div class="col-8">
-                  <div class="numbers">
-                    <p class="text-sm mb-0 text-capitalize font-weight-bold">Sales</p>
-                    <h5 class="font-weight-bolder mb-0">
-                      $103,430
-                      <span class="text-success text-sm font-weight-bolder">+5%</span>
-                    </h5>
-                  </div>
-                </div>
-                <div class="col-4 text-end">
-                  <div class="icon icon-shape bg-gradient-primary shadow text-center border-radius-md">
-                    <i class="ni ni-cart text-lg opacity-10" aria-hidden="true"></i>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div> -->
-      </div>
+      <div class="row" id="__rate"></div>
       <div class="row my-4">
         <div class="col-lg-12 col-md-12 mb-md-0 mb-4">
           <div class="card">
@@ -246,6 +157,8 @@
   </div>
   <!--   Core JS Files   -->
   <script src="https://code.jquery.com/jquery-3.6.1.min.js"></script>
+  <script src="https://pagination.js.org/dist/2.1.5/pagination.js"></script>
+  <script src="https://pagination.js.org/dist/2.1.5/pagination.min.js"></script>
   <script src="../assets/js/core/popper.min.js"></script>
   <script src="../assets/js/core/bootstrap.min.js"></script>
   <script src="../assets/js/plugins/perfect-scrollbar.min.js"></script>
@@ -436,14 +349,9 @@
             dataType: 'json',
             url: url,
             success: function(data) {
-                // for(i in data) {
-                //   console.log(data[i].id)
-                // }
                 var result = "";
                 data.data.forEach(item => {
                     const {id, rank, symbol, supply, maxSupply, name, marketCapUsd, volumeUsd24Hr, priceUsd, changePercent24Hr, vwap24Hr, explorer} = item;
-                    const iddd = "123" + ${id};
-                    console.log(iddd)
                     result +=`
                         <tr class="text-center">
                             <td>${rank}</td>
@@ -458,7 +366,44 @@
                 $('#__info').append(result);
             }
         })
+
+        $.ajax({
+            dataType: 'json',
+            url: url,
+            success: function(data) {
+                var result = "";
+                data.data.slice(-4).forEach(item => {
+                    const {id, rank, symbol, supply, maxSupply, name, marketCapUsd, volumeUsd24Hr, priceUsd, changePercent24Hr, vwap24Hr, explorer} = item;
+                    result +=`
+                        <div class="col-xl-3 col-sm-6 mb-xl-0 mb-4">
+                          <div class="card">
+                            <div class="card-body p-3">
+                              <div class="row">
+                                <div class="col-8">
+                                  <div class="numbers">
+                                    <p class="text-sm mb-0 text-capitalize font-weight-bold">${name}</p>
+                                    <h5 class="font-weight-bolder mb-0">
+                                      ${(parseFloat(priceUsd).toFixed(2))}
+                                      ${(parseFloat(changePercent24Hr) > 0) ? `<span class="text-success text-sm font-weight-bolder">+${(parseFloat(changePercent24Hr).toFixed(2))}%</span>` : `<span class="text-danger text-sm font-weight-bolder">${(parseFloat(changePercent24Hr).toFixed(2))}%</span>`}
+                                    </h5>
+                                  </div>
+                                </div>
+                                <div class="col-4 text-end">
+                                  <div class="icon icon-shape bg-gradient-primary shadow text-center border-radius-md">
+                                    <i class="ni ni-money-coins text-lg opacity-10" aria-hidden="true"></i>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                    `;
+                })
+                $('#__rate').append(result);
+            }
+        })
     })
+
     
   </script>
   <!-- Github buttons -->
